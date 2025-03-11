@@ -1,104 +1,89 @@
-import React, { useCallback, useState } from 'react';
-import ReactFlow, {
-  Background,
-  Controls,
-  MiniMap,
-  addEdge,
-  useEdgesState,
-  useNodesState,
-  Connection,
-  Edge,
-} from 'reactflow';
-import { Plus } from 'lucide-react';
-import 'reactflow/dist/style.css';
+import React, { useEffect, useRef } from 'react';
+import * as d3 from 'd3';
+import { MindMapNode } from '../types';
 
-import MindMapNode from './MindMapNode';
-import { MindMapNode as MindMapNodeType } from '../types';
+interface MindMapProps {
+  data: MindMapNode;
+}
 
-const nodeTypes = {
-  mindmap: MindMapNode,
-};
+const MindMap: React.FC<MindMapProps> = ({ data }) => {
+  const svgRef = useRef<SVGSVGElement>(null);
 
-const initialNodes: MindMapNodeType[] = [
-  {
-    id: '1',
-    type: 'mindmap',
-    data: { label: 'Main Topic' },
-    position: { x: 0, y: 0 },
-  },
-];
- 
-export default function MindMap() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-  const [selectedNode, setSelectedNode] = useState<string | null>(null);
+  useEffect(() => {
+    if (!svgRef.current) return;
 
-  const onConnect = useCallback(
-    (params: Connection | Edge) => setEdges((eds) => addEdge(params, eds)),
-    [setEdges],
-  );
+    // Clear previous content
+    d3.select(svgRef.current).selectAll("*").remove();
 
-  const handleAddNode = useCallback(() => {
-    const newNode: MindMapNodeType = {
-      id: `${Date.now()}`,
-      type: 'mindmap',
-      data: { label: 'New Topic' },
-      position: { x: Math.random() * 500, y: Math.random() * 500 },
-    };
-    setNodes((nds) => [...nds, newNode]);
-  }, [setNodes]);
+    const width = 1200;
+    const height = 800;
+    const nodeWidth = 120;
+    const nodeHeight = 40;
 
-  const handleEditNode = useCallback(
-    (id: string) => {
-      const label = prompt('Enter new label:');
-      if (label) {
-        setNodes((nds) =>
-          nds.map((node) =>
-            node.id === id ? { ...node, data: { ...node.data, label } } : node,
-          ),
-        );
-      }
-    },
-    [setNodes],
-  );
+    const svg = d3.select(svgRef.current)
+      .attr('width', width)
+      .attr('height', height);
 
-  const handleDeleteNode = useCallback(
-    (id: string) => {
-      setNodes((nds) => nds.filter((node) => node.id !== id));
-      setEdges((eds) => eds.filter((edge) => edge.source !== id && edge.target !== id));
-    },
-    [setNodes, setEdges],
-  );
+    const g = svg.append('g')
+      .attr('transform', `translate(${width / 2},${height / 2})`);
+
+    const tree = d3.tree<MindMapNode>()
+      .size([height / 2, width / 2 - 160])
+      .separation((a, b) => (a.parent === b.parent ? 1 : 2));
+
+    const root = d3.hierarchy(data);
+    const links = tree(root).links();
+    const nodes = root.descendants();
+
+    // Custom curve for links
+    const diagonal = d3.linkHorizontal<any, any>()
+      .x(d => d.y)
+      .y(d => d.x);
+
+    // Add links
+    g.selectAll('path')
+      .data(links)
+      .enter()
+      .append('path')
+      .attr('d', diagonal)
+      .attr('fill', 'none')
+      .attr('stroke', '#64748b')
+      .attr('stroke-width', 1.5);
+
+    // Add nodes
+    const node = g.selectAll('g')
+      .data(nodes)
+      .enter()
+      .append('g')
+      .attr('transform', d => `translate(${d.y},${d.x})`);
+
+    // Node rectangles
+    node.append('rect')
+      .attr('x', -nodeWidth / 2)
+      .attr('y', -nodeHeight / 2)
+      .attr('width', nodeWidth)
+      .attr('height', nodeHeight)
+      .attr('rx', 6)
+      .attr('ry', 6)
+      .attr('fill', '#fff')
+      .attr('stroke', '#64748b')
+      .attr('stroke-width', 1.5);
+
+    // Node text
+    node.append('text')
+      .attr('dy', '0.35em')
+      .attr('text-anchor', 'middle')
+      .attr('class', 'text-sm font-medium')
+      .text(d => d.data.name)
+      .attr('fill', '#1e293b');
+
+  }, [data]);
 
   return (
-    <div className="w-screen h-screen bg-gray-50">
-      <ReactFlow
-        nodes={nodes.map((node) => ({
-          ...node,
-          data: {
-            ...node.data,
-            onEdit: handleEditNode,
-            onDelete: handleDeleteNode,
-          },
-        }))}
-        edges={edges}
-        onNodesChange={onNodesChange}
-        onEdgesChange={onEdgesChange}
-        onConnect={onConnect}
-        nodeTypes={nodeTypes}
-        fitView
-      >
-        <Background />
-        <Controls />
-        <MiniMap />
-      </ReactFlow>
-
-      <button
-        onClick={handleAddNode}
-        className="fixed bottom-4 right-4 bg-blue-500 text-white p-3 rounded-full shadow-lg hover:bg-blue-600 transition-colors"
-      >
-        <Plus size={24} />
-      </button>
+    <div className="w-full h-full overflow-auto bg-slate-50 rounded-lg shadow-inner">
+      <svg ref={svgRef} className="mx-auto"></svg>
     </div>
   );
-}
+};
+
+export default MindMap
