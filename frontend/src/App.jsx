@@ -1,12 +1,10 @@
-import { useState } from 'react'
 import './App.css'
 import LeanCanvas from './LeanCanvas'
-import MindMap from './Mindmap'
+import MindMap from './components/MindMap'
 
 function App() {
   return (
     <>
-      <LeanCanvas />
       <MindMap />
     </>
   )
