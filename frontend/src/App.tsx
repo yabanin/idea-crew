@@ -1,11 +1,11 @@
 import './App.css'
-import LeanCanvas from './LeanCanvas'
 import MindMap from './components/MindMap'
+import { sampleMindMapData } from './data/mindmapData'
 
 function App() {
   return (
     <>
-      <MindMap />
+      <MindMap data={sampleMindMapData} />
     </>
   )
 }
