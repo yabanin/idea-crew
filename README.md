@@ -7,3 +7,5 @@
  ┣ 📄 index.html         # 補完APIを確認するためのフロントエンド
  ┣ 📄 requirements.txt   # 依存ライブラリ
  ┗ 📄 README.md          # このファイル
+
+ マージ実験
