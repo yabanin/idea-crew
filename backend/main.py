@@ -31,6 +31,10 @@ class CompletionRequest(BaseModel):
     field: str  # どの入力欄に対応する補完か
 
 
+@app.get("/")
+def hello():
+    return {"message": "Hello World"}
+
 @app.post("/complete")
 async def complete(request: CompletionRequest):
     print("📩 受信データ:", request)  # 受信データのログ出力
