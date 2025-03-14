@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Save } from 'lucide-react';
+import axios from 'axios';
 
 interface CanvasSection {
   title: string;
@@ -8,6 +9,9 @@ interface CanvasSection {
 }
 
 function LeanCanvas() {
+  const url = "example.com"
+
+
   const [sections, setSections] = useState<CanvasSection[]>([
     { title: '問題', placeholder: '解決すべき上位3つの問題は何ですか？', value: '' },
     { title: '既存の代替品', placeholder: '現在どのように問題が解決されていますか？', value: '' },
@@ -20,6 +24,12 @@ function LeanCanvas() {
     { title: 'コスト構造', placeholder: '主なコストは何ですか？', value: '' },
     { title: '収益の流れ', placeholder: '収益はどのように生み出されますか？', value: '' },
   ]);
+
+  const completeCanvas = () => {
+    const request = {"text": ""}
+
+    axios.post(url + "/complete", request)
+  }
 
   const handleChange = (index: number, value: string) => {
     const newSections = [...sections];
