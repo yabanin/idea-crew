@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IdeaCrew - Step1</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <header>
+    <img src="image_1.png" alt="IdeaCrew Logo" class="logo">
+  </header>
+
+  <h1>Step1</h1>
+
+  <div class="input-container">
+    <label for="whoInput"><strong>誰のため？</strong></label>
+    <input type="text" id="whoInput" placeholder="例: ハッカソン参加者" oninput="fetchCompletion('whoInput', 'whoSuggestion')"
+      onkeydown="confirmCompletion(event, 'whoInput', 'whoSuggestion')">
+    <span id="whoSuggestion" class="suggestion"></span>
+  </div>
+
+  <div class="input-container">
+    <label for="whatInput"><strong>何を解決する？</strong></label>
+    <input type="text" id="whatInput" placeholder="例: アイデア出しの手助け"
+      oninput="fetchCompletion('whatInput', 'whatSuggestion')"
+      onkeydown="confirmCompletion(event, 'whatInput', 'whatSuggestion')">
+    <span id="whatSuggestion" class="suggestion"></span>
+  </div>
+
+  <button onclick="goToStep2()">次へ</button>
+
+  <script src="script.js"></script>
+</body>
+
+</html>
