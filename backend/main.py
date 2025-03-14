@@ -168,5 +168,3 @@ async def complete(request: CompletionRequest):
     print("✅ APIレスポンス:", response_content)  # レスポンスをログに出力
     return {"補完": response_content}
 
-
-把握"のみ"
