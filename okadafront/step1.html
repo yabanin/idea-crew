@@ -16,15 +16,15 @@
   <h1>Step1</h1>
 
   <div class="input-container">
-    <label for="whoInput"><strong>誰のため？</strong></label>
-    <input type="text" id="whoInput" placeholder="例: ハッカソン参加者" oninput="fetchCompletion('whoInput', 'whoSuggestion')"
+    <label for="who"><strong>誰のため？</strong></label>
+    <input type="text" id="who" placeholder="例: ハッカソン参加者" oninput="fetchCompletion('whoInput', 'whoSuggestion')"
       onkeydown="confirmCompletion(event, 'whoInput', 'whoSuggestion')">
     <span id="whoSuggestion" class="suggestion"></span>
   </div>
 
   <div class="input-container">
-    <label for="whatInput"><strong>何を解決する？</strong></label>
-    <input type="text" id="whatInput" placeholder="例: アイデア出しの手助け"
+    <label for="what"><strong>何を解決する？</strong></label>
+    <input type="text" id="what" placeholder="例: アイデア出しの手助け"
       oninput="fetchCompletion('whatInput', 'whatSuggestion')"
       onkeydown="confirmCompletion(event, 'whatInput', 'whatSuggestion')">
     <span id="whatSuggestion" class="suggestion"></span>
