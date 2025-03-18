@@ -3,6 +3,7 @@
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+from Models import *
 import openai
 import os
 from dotenv import load_dotenv
@@ -27,15 +28,10 @@ app.add_middleware(
 )
 
 
-# ✅ `field` を追加
-class CompletionRequest(BaseModel):
-    text: str  # ユーザーが入力したテキスト
-    field: str  # どの入力欄に対応する補完か
-
-
 @app.get("/")
 def hello():
     return {"message": "Hello World"}
+
 
 
 @app.post("/complete")
@@ -48,7 +44,7 @@ async def complete(request: CompletionRequest):
         "who": f"""
         ### 🔍 **誰のため？**
         ユーザーが「誰のため？」の情報を入力中です：
-        {request.text}
+        {request.who}
     
         🎯 **目的**: この製品・サービスの対象となるユーザー層を明確にする。
     
@@ -72,7 +68,8 @@ async def complete(request: CompletionRequest):
         "problem": f"""
         ### 🔍 **課題**
         ユーザーが「課題」を入力中です：
-        {request.text}
+        {request.what}
+        {request.problem}
 
         🎯 **目的**: ターゲット顧客が直面している主要な問題を明確に補完する。
 
@@ -96,7 +93,7 @@ async def complete(request: CompletionRequest):
         "title": f"""
         ### 🔍 **タイトル**
         ユーザーが「タイトル」を入力中です：
-        {request.text}
+        {request.summary}
 
         🎯 **目的**: サービスやプロダクトを一言で表現し、分かりやすく伝える。
 
@@ -119,7 +116,7 @@ async def complete(request: CompletionRequest):
         "value": f"""
         ### 🔍 **提供価値**
         ユーザーが「提供価値」を入力中です：
-        {request.text}
+        {request.value}
 
         🎯 **目的**: このサービスがどのような価値を提供するのかを明確にする。
 
@@ -142,7 +139,7 @@ async def complete(request: CompletionRequest):
         "summary": f"""
         ### 🔍 **概要**
         ユーザーが「概要」を入力中です：
-        {request.text}
+        {request.summary}
 
         🎯 **目的**: サービスやプロダクトの目的や基本的な機能を明確にする。
 
@@ -165,7 +162,7 @@ async def complete(request: CompletionRequest):
         "beforeAfter": f"""
         ### 🔍 **Before / After**
         ユーザーが「Before / After」の情報を入力中です：
-        {request.text}
+        {request.beforeAfter}
 
         🎯 **目的**: 現状の課題（Before）と、それを解決した後の理想的な状態（After）を明確にする。
 
