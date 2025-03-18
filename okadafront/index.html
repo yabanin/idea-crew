@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>補完テスト</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 50%;
+      margin: auto;
+    }
+
+    .input-group {
+      position: relative;
+      margin-bottom: 20px;
+      text-align: left;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+    }
+
+    .input-container {
+      position: relative;
+      width: 100%;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      font-size: 18px;
+      position: relative;
+      background-color: transparent;
+      /* 背景を透明に */
+      z-index: 2;
+      /* 入力を前面に */
+    }
+
+    .suggestion {
+      position: absolute;
+      top: 20
+      px;
+      /* 入力の下に少しずらす */
+      left: 12px;
+      color: gray;
+      font-size: 18px;
+      opacity: 0.7;
+      /* 透明度を調整 */
+      pointer-events: none;
+      z-index: 1;
+      /* 補完を背景に */
+    }
+  </style>
+</head>
+
+<body>
+  <h1>補完テスト</h1>
+  <div class="container">
+    <!-- 各fieldの入力欄 -->
+    <div class="input-group">
+      <label for="who">誰のため？</label>
+      <div class="input-container">
+        <input type="text" id="who" oninput="fetchCompletion('who')" placeholder="ターゲット顧客を入力">
+        <span class="suggestion" id="whoSuggestion"></span>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label for="problem">課題</label>
+      <div class="input-container">
+        <input type="text" id="problem" oninput="fetchCompletion('problem')" placeholder="ターゲットの課題を入力">
+        <span class="suggestion" id="problemSuggestion"></span>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label for="title">タイトル</label>
+      <div class="input-container">
+        <input type="text" id="title" oninput="fetchCompletion('title')" placeholder="サービス名や説明">
+        <span class="suggestion" id="titleSuggestion"></span>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label for="value">提供価値</label>
+      <div class="input-container">
+        <input type="text" id="value" oninput="fetchCompletion('value')" placeholder="どんな価値を提供するか">
+        <span class="suggestion" id="valueSuggestion"></span>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label for="summary">概要</label>
+      <div class="input-container">
+        <input type="text" id="summary" oninput="fetchCompletion('summary')" placeholder="サービスの目的や機能">
+        <span class="suggestion" id="summarySuggestion"></span>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <label for="beforeAfter">Before / After</label>
+      <div class="input-container">
+        <input type="text" id="beforeAfter" oninput="fetchCompletion('beforeAfter')" placeholder="課題と解決後の状態">
+        <span class="suggestion" id="beforeAfterSuggestion"></span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let debounceTimer;
+
+function fetchCompletion(field) {
+  let inputField = document.getElementById(field);
+  let suggestionField = document.getElementById(field + "Suggestion");
+  let inputText = inputField.value;
+
+  if (inputText.length < 3) return; // 3文字未満なら補完しない
+
+  clearTimeout(debounceTimer); // 以前のタイマーをクリア
+  debounceTimer = setTimeout(() => {
+    fetch("http://127.0.0.1:8000/complete", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text: inputText, field: field })
+    })
+      .then(response => response.json())
+      .then(data => {
+        suggestionField.textContent = data["補完"] || "";
+      })
+      .catch(error => console.error("エラー:", error));
+  }, 300); // 300ms 待ってからリクエスト送信
+}
+
+
+    // Tabキーで補完を適用
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Tab") {
+        let activeElement = document.activeElement;
+        let field = activeElement.id;
+        let suggestionField = document.getElementById(field + "Suggestion");
+
+        if (suggestionField && suggestionField.textContent) {
+          event.preventDefault();
+          activeElement.value += suggestionField.textContent;
+          suggestionField.textContent = "";
+        }
+      }
+    });
+  </script>
+</body>
+
+</html>
