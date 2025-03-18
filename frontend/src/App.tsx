@@ -1,11 +1,11 @@
 import './App.css'
-import MindMap from './components/MindMap'
-import { sampleMindMapData } from './data/mindmapData'
+import React from "react";
+import StepSheet from "./components/StepSheet";
 
 function App() {
   return (
     <>
-      <MindMap data={sampleMindMapData} />
+      <StepSheet />
     </>
   )
 }
