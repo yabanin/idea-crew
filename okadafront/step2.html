@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Step2 - 簡易リーンキャンバス</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 50%;
+      margin: auto;
+      text-align: left;
+    }
+
+    .input-container {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      margin-bottom: 15px;
+    }
+
+    label {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      margin-bottom: 5px;
+    }
+
+    .suggestion {
+      color: gray;
+      font-size: 14px;
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+    }
+
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+  <img src="image_1.png" alt="IdeaCrew Logo" style="height: 50px;">
+  <h1>Step2</h1>
+
+  <div class="container">
+    <!-- ✅ 「誰のため？」（Step1から引き継ぐ） -->
+    <div class="input-container">
+      <label for="whoInput">誰のため？</label>
+      <input type="text" id="whoInput" value="ハッカソン参加者" oninput="fetchCompletion('whoInput', 'whoSuggestion')">
+      <span id="whoSuggestion" class="suggestion"></span>
+    </div>
+
+    <!-- ✅ 「提供価値」 -->
+    <div class="input-container">
+      <label for="valueInput">提供価値</label>
+      <input type="text" id="valueInput" placeholder="例: 効率的なブレインストーミング支援"
+        oninput="fetchCompletion('valueInput', 'valueSuggestion')">
+      <span id="valueSuggestion" class="suggestion"></span>
+    </div>
+
+    <!-- ✅ 「概要」 -->
+    <div class="input-container">
+      <label for="summaryInput">概要</label>
+      <textarea id="summaryInput" rows="3" placeholder="例: チームのアイデア出しをスムーズにするツール"></textarea>
+    </div>
+
+    <!-- ✅ 「Before / After」 -->
+    <div class="input-container">
+      <label for="beforeAfterInput">Before / After</label>
+      <textarea id="beforeAfterInput" rows="3" placeholder="例: 現状の課題と、このツールを使うことでどう改善されるか"></textarea>
+    </div>
+
+    <!-- ✅ ボタンエリア -->
+    <div class="button-container">
+      <button onclick="goBack()">戻る</button>
+      <button onclick="goNext()">次へ</button>
+    </div>
+  </div>
+
+  <script>
+    function fetchCompletion(inputId, suggestionId) {
+      let inputText = document.getElementById(inputId).value;
+      if (inputText.length < 5) return;
+
+      fetch("http://127.0.0.1:8000/complete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ text: inputText })
+      })
+        .then(response => response.json())
+        .then(data => {
+          document.getElementById(suggestionId).textContent = data.補完;
+        })
+        .catch(error => console.error("Error fetching completion:", error));
+    }
+
+    function goBack() {
+      window.location.href = "step1.html";
+    }
+
+    function goNext() {
+      window.location.href = "step3.html";
+    }
+  </script>
+
+</body>
+
+</html>
