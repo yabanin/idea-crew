@@ -16,19 +16,19 @@ const MindMap: React.FC<MindMapProps> = ({ data }) => {
     d3.select(svgRef.current).selectAll("*").remove();
 
     const width = 1200;
-    const height = 800;
-    const nodeWidth = 120;
+    const height = 700;
+    const nodeWidth = 250;
     const nodeHeight = 40;
 
     const svg = d3.select(svgRef.current)
       .attr('width', width)
-      .attr('height', height);
+      .attr('height', height)
 
     const g = svg.append('g')
       .attr('transform', `translate(${width / 2},${height / 2})`);
 
     const tree = d3.tree<MindMapNode>()
-      .size([height / 2, width / 2 - 160])
+      .size([height, width / 2])
       .separation((a, b) => (a.parent === b.parent ? 1 : 2));
 
     const root = d3.hierarchy(data);
@@ -37,8 +37,8 @@ const MindMap: React.FC<MindMapProps> = ({ data }) => {
 
     // Custom curve for links
     const diagonal = d3.linkHorizontal<any, any>()
-      .x(d => d.y)
-      .y(d => d.x);
+      .x(d => d.y - 400)
+      .y(d => d.x - 350);
 
     // Add links
     g.selectAll('path')
@@ -55,7 +55,7 @@ const MindMap: React.FC<MindMapProps> = ({ data }) => {
       .data(nodes)
       .enter()
       .append('g')
-      .attr('transform', d => `translate(${d.y},${d.x})`);
+      .attr('transform', d => `translate(${d.y - 400},${d.x - 350})`);
 
     // Node rectangles
     node.append('rect')
