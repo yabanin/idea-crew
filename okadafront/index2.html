@@ -9,7 +9,7 @@
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      padding: 20px;
+      padding: 20px;あ
     }
 
     .container {
@@ -19,7 +19,7 @@
 
     .input-group {
       position: relative;
-      margin-bottom: 55px;
+      margin-bottom: 20px;
       text-align: left;
     }
 
@@ -36,19 +36,13 @@
     }
 
     .suggestion {
-      position: absolute;
-      top: 20 px;
-      /* 入力の下に少しずらす */
-      left: 12px;
       color: gray;
-      font-size: 18px;
-      opacity: 0.7;
-      /* 透明度を調整 */
+      position: absolute;
+      left: 10px;
+      top: 50px;
       pointer-events: none;
-      z-index: 1;
-      /* 補完を背景に */
+      font-size: 16px;
     }
-
 
     .note {
       font-size: 12px;
@@ -71,13 +65,13 @@
     <!-- Before / After -->
     <div class="input-group">
       <label for="before">Before（課題）</label>
-      <input type="text" id="before" value="斬新なアイデアが生まれにくい" >
+      <input type="text" id="before" value="斬新なアイデアが生まれにくい" oninput="fetchCompletion('beforeAfter')">
     </div>
 
     <div class="input-group">
       <label for="after">After（解決後の状態）</label>
-      <input type="text" id="after"oninput="fetchCompletion('summary')"oninput="fetchCompletion('value')"oninput="fetchCompletion('after')">
-      <span class="suggestion" id="afterSuggestion"></span>
+      <input type="text" id="after" placeholder="" >
+      <span class="suggestion" id="After"></span>
     </div>
 
     <!-- サービス名（タイトル） -->
@@ -89,14 +83,16 @@
     <!-- 概要 -->
     <div class="input-group">
       <label for="summary">概要</label>
-      <input type="text" id="summary" oninput="fetchCompletion('summary')"oninput="fetchCompletion('value')"oninput="fetchCompletion('after')">
+      <input type="text" id="summary" oninput="fetchCompletion('summary')"
+        onkeydown="confirmCompletion(event, 'summary')" placeholder="例: アイデアフレームワークの作成を支援">
       <span class="suggestion" id="summarySuggestion"></span>
     </div>
 
     <!-- 提供価値 -->
     <div class="input-group">
       <label for="value">提供価値</label>
-      <input type="text" id="value" oninput="fetchCompletion('summary')"oninput="fetchCompletion('value')"oninput="fetchCompletion('after')">
+      <input type="text" id="value" oninput="fetchCompletion('value')" onkeydown="confirmCompletion(event, 'value')"
+        placeholder="例: 一人では難しいアイデア生成ができる">
       <span class="suggestion" id="valueSuggestion"></span>
     </div>
 
@@ -106,37 +102,27 @@
     let debounceTimer;
 
     function fetchCompletion(field) {
-      let summaryText = document.getElementById("summary").value;
-      let valueText = document.getElementById("value").value;
-      let afterText = document.getElementById("after").value;
+      let inputField = document.getElementById(field);
+      let suggestionField = document.getElementById(field + "Suggestion");
+      let inputText = inputField.value;
 
-      clearTimeout(debounceTimer);
+      if (inputText.length < 3) return; // 3文字未満なら補完しない
+
+      clearTimeout(debounceTimer); // 以前のタイマーをクリア
       debounceTimer = setTimeout(() => {
         fetch("http://127.0.0.1:8000/complete", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            field: field,
-            summary: summaryText,
-            value: valueText,
-            after: afterText
-          })
+          body: JSON.stringify({ text: inputText, field: field })
         })
           .then(response => response.json())
           .then(data => {
-            if (data.summary) {
-              document.getElementById("summarySuggestion").textContent = data.summary;
-            }
-            if (data.value) {
-              document.getElementById("valueSuggestion").textContent = data.value;
-            }
-            if (data.after) {
-              document.getElementById("afterSuggestion").textContent = data.after;
-            }
+            suggestionField.textContent = data["補完"] || "";
           })
           .catch(error => console.error("エラー:", error));
-      }, 300);
+      }, 300); // 300ms 待ってからリクエスト送信
     }
+
 
     // Tabキーで補完を適用
     document.addEventListener("keydown", (event) => {
