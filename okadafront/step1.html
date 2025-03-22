@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IdeaCrew - Step1</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+  
+    .container {
+      width: 60%;
+      margin: auto;
+    }
+  
+    .input-group {
+      position: relative;
+      margin-bottom: 55px;
+      text-align: left;
+    }
+  
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+    }
+  
+    input {
+      width: 100%;
+      padding: 10px;
+      font-size: 18px;
+    }
+  
+
+    .note {
+      font-size: 12px;
+      color: gray;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <img src="image_1.png" alt="IdeaCrew Logo" class="logo">
+  </header>
+
+<body>
+  <h1>Step1 - IdeaCrew</h1>
+  <p class="note">AIが補完します。</p>
+  <div class="container">
+
+    <!-- 顧客 -->
+    <div class="input-group">
+      <label for="customer">顧客</label>
+      <input type="text" id="customer" value="ハッカソンやビジコンに挑戦する学生・社会人向け">
+    </div>
+
+    <!-- Before / After -->
+    <div class="input-group">
+      <label for="before">Before（課題）</label>
+      <input type="text" id="before" value="斬新なアイデアが生まれにくい">
+    </div>
+
+  <button onclick="goToStep2()">次へ</button>
+
+  <script>
+    function goToStep2() {
+      location.href = 'step2.html';
+    }
+  </script>
+</body>
+
+</html>

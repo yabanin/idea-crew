@@ -58,8 +58,11 @@
 </head>
 
 <body>
+  <header>
+    <img src="image_1.png" alt="IdeaCrew Logo" class="logo">
+  </header>
   <h1>Step2 - IdeaCrew</h1>
-  <p class="note">事前に一部補完された状態で開始し、入力すると他の欄をAIが補完します。</p>
+  <p class="note">AIが補完します。</p>
   <div class="container">
 
     <!-- 顧客 -->
@@ -99,6 +102,7 @@
       <input type="text" id="value" oninput="fetchCompletion('summary')"oninput="fetchCompletion('value')"oninput="fetchCompletion('after')">
       <span class="suggestion" id="valueSuggestion"></span>
     </div>
+    <button onclick=" backToStep2()">戻る</button>
 
   </div>
 
@@ -152,6 +156,10 @@
         }
       }
     });
+
+    function backToStep2() {
+      location.href = "step1.html";
+    }
   </script>
 
 </body>
